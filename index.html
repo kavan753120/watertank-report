@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>洗水塔服務表單</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            lightblue: '#e0f7ff',
+            darkbg: '#1a202c',
+            primary: '#4ade80'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .dino-helper {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 50;
+      display: none;
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 10px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+    .dino-helper img {
+      width: 80px;
+    }
+    .badge-tier {
+      display: inline-block;
+      background-color: #fff;
+      padding: 10px;
+      border-radius: 12px;
+      margin-bottom: 10px;
+      text-align: center;
+      box-shadow: 0 0 4px rgba(0,0,0,0.1);
+    }
+    .dino-emoji {
+      position: fixed;
+      right: 16px;
+      bottom: 140px;
+      font-size: 48px;
+      cursor: pointer;
+      z-index: 50;
+    }
+    .info-box {
+      display: none;
+      position: absolute;
+      background-color: rgba(255,255,255,0.95);
+      color: #000;
+      padding: 8px;
+      border-radius: 8px;
+      box-shadow: 0 0 6px rgba(0,0,0,0.15);
+      font-size: 14px;
+      z-index: 40;
+    }
+  </style>
+</head>
+<body class="bg-lightblue dark:bg-darkbg text-black dark:text-white min-h-screen p-4">
+  <div class="max-w-4xl mx-auto">
+    <h1 class="text-3xl font-bold text-center mb-6">🧼 洗水塔服務表單</h1>
+    <form class="space-y-4">
+      <!-- 表單內容同前略 -->
+      <div>
+        <label class="block font-bold">已清洗次數：</label>
+        <input type="number" id="clean-count" value="0" class="w-full p-2 rounded border" onchange="updateAchievement()">
+        <div id="current-tier" class="mt-2 font-bold text-green-600"></div>
+        <div id="badge-display" class="mt-4"></div>
+      </div>
+    </form>
+  </div>
+  <!-- 恐龍小幫手 Emoji -->
+  <div class="dino-emoji" id="dino-emoji">🦕</div>
+  <div class="dino-helper" id="dino-helper">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Cartoon_Dinosaur_%28vector%29.svg/512px-Cartoon_Dinosaur_%28vector%29.svg.png" alt="恐龍小幫手" />
+    <p id="dino-text" class="text-black">提示內容</p>
+  </div>
+  <div class="info-box" id="info-box"></div>
+  <script>
+    const badges = [
+      "🌱 新手滴水獸 (1次)",
+      "🧼 小洗洗 (2次)",
+      "🐤 噗通隊員 (3次)",
+      "🐢 穩定清理師 (4次)",
+      "🦖 水塔守護者 (5次)",
+      "🌊 波動洗王 (6次)",
+      "🧽 超級潔淨星 (7次)",
+      "💧 雨神之子 (8次)",
+      "🔱 洗界王者 (9次)",
+      "👑 終極水塔宗師 (10次+)"
+    ];
+
+    function updateAchievement() {
+      const count = parseInt(document.getElementById('clean-count').value) || 0;
+      const tierIndex = Math.min(count - 1, 9);
+      const badgeDisplay = document.getElementById('badge-display');
+      badgeDisplay.innerHTML = '';
+      badges.forEach((badge, i) => {
+        badgeDisplay.innerHTML += `<div class="badge-tier ${i <= tierIndex ? 'bg-green-100' : 'bg-gray-100'}">${badge}</div>`;
+      });
+      document.getElementById('current-tier').textContent = count > 0 ? `目前等級：${badges[tierIndex]}` : '';
+    }
+
+    function previewImage(event, targetId) {
+      const reader = new FileReader();
+      reader.onload = function() {
+        document.getElementById(targetId).src = reader.result;
+      };
+      reader.readAsDataURL(event.target.files[0]);
+    }
+
+    document.getElementById('dino-emoji').addEventListener('click', () => {
+      const helper = document.getElementById('dino-helper');
+      helper.style.display = helper.style.display === 'block' ? 'none' : 'block';
+      document.getElementById('dino-text').textContent = '我是恐龍小幫手，滑鼠移動到各區塊會顯示提示唷～';
+    });
+
+    const hints = new Map([
+      ['客戶姓名：', '填寫客戶的全名方便聯繫'],
+      ['清洗日期：', '實際完成清洗的日期'],
+      ['客戶地址：', '填寫水塔所在地地址'],
+      ['水塔材質：', '可多選，記錄材質以便後續服務'],
+      ['水塔清洗頻率：', '建議的定期清洗頻率'],
+      ['✅ 洗前狀況：', '清洗前水塔內的狀況，可附圖'],
+      ['✅ 洗後成果：', '清洗後的成果證明，可附圖'],
+      ['下次想要的清洗時間為：', '用來規劃下次服務與通知'],
+      ['已清洗次數：', '會影響等級徽章顯示']
+    ]);
+
+    const infoBox = document.getElementById('info-box');
+    document.querySelectorAll('label').forEach(label => {
+      label.addEventListener('mouseover', (e) => {
+        const text = hints.get(label.textContent.trim());
+        if (text) {
+          infoBox.textContent = text;
+          infoBox.style.display = 'block';
+          const rect = label.getBoundingClientRect();
+          infoBox.style.top = `${window.scrollY + rect.top - 40}px`;
+          infoBox.style.left = `${rect.left}px`;
+        }
+      });
+      label.addEventListener('mouseout', () => {
+        infoBox.style.display = 'none';
+      });
+    });
+  </script>
+</body>
+</html>

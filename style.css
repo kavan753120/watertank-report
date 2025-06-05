@@ -1,0 +1,26 @@
+
+body {
+  font-family: "Arial", sans-serif;
+  background-color: #d4f0ff;
+  color: #333;
+  padding: 1rem;
+}
+input, select {
+  margin: 0.5rem 0;
+}
+fieldset {
+  margin: 1rem 0;
+  border: 1px solid #aaa;
+  padding: 1rem;
+}
+.tip {
+  display: inline-block;
+  background: #fef6d3;
+  padding: 1rem;
+  border-radius: 1rem;
+  margin-right: 1rem;
+}
+.dark-mode {
+  background-color: #1a1a1a;
+  color: #f0f0f0;
+}
