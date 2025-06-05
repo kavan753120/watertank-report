@@ -16,3 +16,23 @@ document.getElementById("cleanCount").addEventListener("input", function () {
   }).join("");
   document.getElementById("badgeDisplay").innerHTML = badgeHtml;
 });
+
+// 取代為你自己取得的 Google Sheets CSV 連結
+const sheetURL = 'https://docs.google.com/spreadsheets/d/e/xxxxxxx/pub?output=csv';
+
+fetch(sheetURL)
+  .then(response => response.text())
+  .then(csv => {
+    const rows = csv.trim().split('\n').map(r => r.split(','));
+    const table = document.createElement('table');
+    rows.forEach((row, i) => {
+      const tr = document.createElement('tr');
+      row.forEach(cell => {
+        const el = i === 0 ? document.createElement('th') : document.createElement('td');
+        el.textContent = cell;
+        tr.appendChild(el);
+      });
+      table.appendChild(tr);
+    });
+    document.getElementById('sheet-data').appendChild(table);
+  });
