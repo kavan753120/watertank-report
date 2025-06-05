@@ -16,23 +16,30 @@ document.getElementById("cleanCount").addEventListener("input", function () {
   }).join("");
   document.getElementById("badgeDisplay").innerHTML = badgeHtml;
 });
-
-// 取代為你自己取得的 Google Sheets CSV 連結
-const sheetURL = 'https://docs.google.com/spreadsheets/d/e/xxxxxxx/pub?output=csv';
+// 載入 Google Sheets CSV 並顯示為表格
+const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSHq-3c1kJR4Lx_2nmH7N5ijILnVAwtH_mEQLDhoG5BDAkiOEuYhKgQnejcdHfzG4LT8Pu_Vecg7vbe/pub?output=csv';
 
 fetch(sheetURL)
   .then(response => response.text())
   .then(csv => {
     const rows = csv.trim().split('\n').map(r => r.split(','));
     const table = document.createElement('table');
+    table.className = 'table-auto w-full text-left border-collapse border border-gray-300';
+    
     rows.forEach((row, i) => {
       const tr = document.createElement('tr');
       row.forEach(cell => {
         const el = i === 0 ? document.createElement('th') : document.createElement('td');
         el.textContent = cell;
+        el.className = 'border px-4 py-2';
         tr.appendChild(el);
       });
       table.appendChild(tr);
     });
+    
     document.getElementById('sheet-data').appendChild(table);
+  })
+  .catch(err => {
+    console.error("載入 Google Sheets 錯誤：", err);
+    document.getElementById('sheet-data').textContent = '無法載入表格資料。';
   });

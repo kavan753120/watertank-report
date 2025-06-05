@@ -155,6 +155,8 @@
 </body>
 </html>
 
-<div id="sheet-data"></div>
+<!-- 放在 body 最後面 -->
+<div id="sheet-data" class="max-w-4xl mx-auto mt-8 bg-white dark:bg-gray-800 p-4 rounded shadow"></div>
 <script src="script.js"></script>
+</body>
 
